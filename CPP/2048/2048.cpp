@@ -26,12 +26,12 @@ class PlayGrid {
         }
 
         Direction readInput(){
-            std::cout << "Please enter " << dimension << " lines of " << dimension << " numbers:" << std::endl;
+            // std::cout << "Please enter " << dimension << " lines of " << dimension << " numbers:" << std::endl;
             for(int lineNr=0; lineNr<dimension; lineNr++){
                 readLine(lineNr);
             }
             unsigned short newDirection;
-            std::cout << "Please enter sliding direction (left=0, up=1, right=2, down=3): ";
+            // std::cout << "Please enter sliding direction (left=0, up=1, right=2, down=3): ";
             std::cin >> newDirection;
             return (Direction)newDirection;
         }
@@ -43,8 +43,6 @@ class PlayGrid {
         bool canBeSlided(const unsigned int thisElement, const unsigned int nextElement){
             return (nextElement != 0 && thisElement == 0);
         }
-
-
 
 
         void slideColumnUp(const int column){
@@ -74,9 +72,6 @@ class PlayGrid {
                 slideColumnUp(column);
             }
         }
-
-
-
 
 
         void slideColumnDown(const int column){
