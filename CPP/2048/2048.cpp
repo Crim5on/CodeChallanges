@@ -17,8 +17,7 @@ class PlayGrid {
     private:
 
         static const unsigned short dimension = 4;
-        static const unsigned short maxIndex = dimension - 1;
-
+        
         std::array<std::array<unsigned int, dimension>, dimension> grid;
 
         void readLine(const unsigned short lineNr){

@@ -3,5 +3,6 @@
 **/*.exe
 **/*.run
 **/*.cbp
-
+**/*.out
+**/*.vscode
 
