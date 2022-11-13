@@ -34,9 +34,9 @@ def merge(line: list) -> list:
     return line
 
 
-
+# testcode:
 testline = [4,2,2,2]
 print(testline)
 testline = merge(testline)
-print("dimesnion: ", dim)
+print("dimension: ", dim)
 print(testline)
