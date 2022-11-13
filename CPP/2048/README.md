@@ -1,0 +1,4 @@
+# 2048
+## source: https://open.kattis.com/problems/2048
+
+2048 is a single-player puzzle game created by Gabriele Cirulli1. It is played on a grid that contains integers that are powers of 2. The player can use a keyboard arrow key (left/up/right/down) to move all the tiles simultaneously. Tiles slide as far as possible in the chosen direction until they are stopped by either another tile or the edge of the grid. If two tiles of the same number collide while moving, they will merge into a tile with the total value of the two tiles that collided. The resulting tile cannot merge with another tile again in the same move.
