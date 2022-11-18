@@ -9,10 +9,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
 
-void spin_word(char* dest, const char* src, size_t len){
+
+void spin_word (char* dest, const char* src, size_t len) 
+{
     for (size_t i=0; i<len; i++){
         dest[i] = src[len-1-i];
     }
@@ -20,10 +21,11 @@ void spin_word(char* dest, const char* src, size_t len){
 }
 
 
-void spin_words (const char* sentence, char* result) {
-
+void spin_words (const char* sentence, char* result) 
+{
+    result[0] = '\0'; 
     size_t sentenceLength = strlen(sentence);
-    char sentenceBuffer[sentenceLength+1]; 
+    char sentenceBuffer[sentenceLength+1];
     strcpy(sentenceBuffer, sentence);
 	char* tmp_word = strtok(sentenceBuffer, " ");
 
@@ -48,13 +50,17 @@ void spin_words (const char* sentence, char* result) {
 }
 
 
-int main(void){
 
-    char testSentence[] = {"Stop Spinning My Words!"};
-    char resultContainer[256] = {};
 
-    spin_words(testSentence, resultContainer);
-    printf("%s\n", resultContainer);
+
+int main (void) 
+{
+    char submitted[30 * 14 + 1];
+    char* result = submitted;
+    const char* sentence = "Stop spinning my words!";
+    
+    spin_words(sentence, (char *)&submitted);
+    printf("%s\n", result);
 
     return EXIT_SUCCESS;
 }
