@@ -8,12 +8,12 @@
 #include <string>
 
 
-std::string reverse_word(std::string word)
+static std::string reverse_word(const std::string word)
 {
     std::string reversed_word;
     size_t len = word.length();
-    for (size_t i=0; i<len+1; i++){
-        reversed_word.append(1, word[len-i]);
+    for (size_t i=0; i<len; i++){
+        reversed_word.append(1, word[len-i-1]);
     }
     return reversed_word;
 } 
@@ -31,20 +31,19 @@ std::string reverse_words(std::string str)
                 result_string.append(tmp_word);
                 tmp_word.clear();
             }
-            result_string.append(1, c);
-        }
-        else if(c == str.back()){
-            tmp_word.append(1, c);
-            tmp_word = reverse_word(tmp_word);
-            result_string.append(tmp_word);
+            result_string.append(1, c);  
         }
         else{
             tmp_word.append(1, c);
         }
     }
-
+    
+    // reverse and append last word:
+    tmp_word = reverse_word(tmp_word);
+    result_string.append(tmp_word);
     return result_string;
 }
+
 
  
 
