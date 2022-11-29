@@ -1,2 +1,2 @@
-# CodeChallanges
-Code Challanges from various Platforms
+# CodeChallenges
+Code Challenges from various Platforms
