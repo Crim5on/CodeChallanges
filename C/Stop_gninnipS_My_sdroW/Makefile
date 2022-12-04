@@ -1,4 +1,4 @@
-all: clean main.o
+all: main.o
 
 main.o:
 	@gcc -std=c99 main.c -o main.o
