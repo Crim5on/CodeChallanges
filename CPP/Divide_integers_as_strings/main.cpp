@@ -141,12 +141,16 @@ class BigInteger
 
     public:
 
-        BigInteger(const std::string number){
+        BigInteger(const std::string& number){
             this->digits = number;
         }
 
         BigInteger(const BigInteger& other){
             this->digits = other.digits;
+        }
+
+        BigInteger(BigInteger&& other){
+            this->digits = std::move(other.digits);
         }
 
         std::string getString(){
@@ -187,8 +191,23 @@ class BigInteger
             return result;
         }
 
-        void operator= (BigInteger const &other){
+        // Copy assignment operator.
+        BigInteger& operator=(BigInteger& other){
+            if(this == &other){
+                return *this;
+            }
             this->digits = other.digits;
+            return *this;
+        }
+
+        // Move assignment operator.
+        BigInteger& operator=(BigInteger&& other){
+            if(this == &other){
+                return *this;
+            }
+            this->digits = other.digits;
+            other.digits.clear();
+            return *this;
         }
 
         BigInteger operator/ (BigInteger const &other){
@@ -230,7 +249,7 @@ std::vector<std::string> divide_strings(std::string a, std::string b)
 
 int main(void)
 {
-    std::vector<std::string> results = divide_strings("10", "2");
+    std::vector<std::string> results = divide_strings("60", "5");
     std::cout << "quotient: " << results[0] << std::endl;
     std::cout << "remainder: " << results[1] << std::endl;
 
