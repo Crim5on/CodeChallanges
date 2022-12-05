@@ -35,16 +35,11 @@ class BigInteger
                 return true;
             }
             else if(a.length() == b.length()){
-
                 for(size_t i=0; i<a.length(); i++){
-
-                    int a_i = (int)(a[i] - '0');
-                    int b_i = (int)(b[i] - '0');
-
-                    if(a_i > b_i){
+                    if(a[i] > b[i]){
                         return false;
                     }
-                    else if(a_i < b_i){
+                    else if(a[i] < b[i]){
                         return true;
                     }
                     else{
@@ -61,16 +56,11 @@ class BigInteger
                 return true;
             }
             else if(a.length() == b.length()){
-
                 for(size_t i=0; i<a.length(); i++){
-
-                    int a_i = (int)(a[i] - '0');
-                    int b_i = (int)(b[i] - '0');
-
-                    if(a_i > b_i){
+                    if(a[i] > b[i]){
                         return true;
                     }
-                    else if(a_i < b_i){
+                    else if(a[i] < b[i]){
                         return false;
                     }
                     else{
@@ -81,41 +71,21 @@ class BigInteger
             return false;
         }
 
-
-        bool isEqual(const std::string& a, const std::string& b)
-        {
-            if(a.length() == b.length()){
-
-                for(size_t i=0; i<a.length(); i++){
-
-                    int a_i = (int)(a[i] - '0');
-                    int b_i = (int)(b[i] - '0');
-
-                    if(a_i != b_i){
-                        return false;
-                    }
-                }
-                return true;
-            }
-            else{
-                return false;
-            }    
-        }
-
-
         std::string minus(const std::string& a, const std::string& b)
         {
             std::string result;
-            int digit = 0;
-            int ubertrag = 0;
-            long long i = a.length() - 1;
-            long long j = b.length() - 1;
+            int i = a.length() - 1;
+            int j = b.length() - 1;
+            unsigned short ubertrag = 0;
+            unsigned short digit;
+            unsigned short a_i;
+            unsigned short b_j;
 
             while(i >= 0)
             {
                 if(j >= 0){
-                    int a_i = (int)(a[i] - '0');
-                    int b_j = (int)(b[j] - '0');
+                    a_i = (unsigned short)(a[i] - '0');
+                    b_j = (unsigned short)(b[j] - '0');
                     // actual calculation:
                     b_j = b_j + ubertrag;
                     ubertrag = 0;
@@ -129,12 +99,19 @@ class BigInteger
                     j--;
                 }
                 else{
-                    digit = (int)(a[i] - '0') - ubertrag;
+                    digit = (unsigned short)(a[i] - '0') - ubertrag;
                     ubertrag = 0;
                 }
                 result.insert(0, 1, (char)(digit + '0'));
                 i--;
             }
+            return result;
+        }
+
+        BigInteger operator- (BigInteger const &other){
+            BigInteger result;
+            result.digits = minus(this->digits, other.digits);
+            result.removeLeadingZeros();
             return result;
         }
 
@@ -166,33 +143,11 @@ class BigInteger
         }
         
         bool operator== (BigInteger const& other){
-            return isEqual(this->digits, other.digits);
-        }
-
-        bool operator<= (BigInteger const& other){
-            return isLower(this->digits, other.digits) || isEqual(this->digits, other.digits);
-        }
-
-        bool operator>= (BigInteger const& other){
-            return isLarger(this->digits, other.digits) || isEqual(this->digits, other.digits);;
-        }
-
-        BigInteger operator- (BigInteger const &other){
-            BigInteger result;
-
-            if(! (*this < other)){
-                result.digits = minus(this->digits, other.digits);
-                result.removeLeadingZeros();
-            }
-            else {
-                result.digits = std::string("0");
-            }
-            
-            return result;
+            return (this->digits == other.digits);
         }
 
         // Copy assignment operator.
-        BigInteger& operator=(BigInteger& other){
+        BigInteger& operator= (BigInteger& other){
             if(this == &other){
                 return *this;
             }
@@ -201,7 +156,7 @@ class BigInteger
         }
 
         // Move assignment operator.
-        BigInteger& operator=(BigInteger&& other){
+        BigInteger& operator= (BigInteger&& other){
             if(this == &other){
                 return *this;
             }
@@ -213,7 +168,7 @@ class BigInteger
         BigInteger operator/ (BigInteger const &other){
             size_t div_count = 0;
             BigInteger remainder = *this;
-            while(remainder >= other){
+            while((remainder > other) || (remainder == other)){
                 remainder = remainder - other;
                 div_count++;
             }
@@ -224,7 +179,7 @@ class BigInteger
 
         BigInteger operator% (BigInteger const &other){
             BigInteger remainder = *this;
-            while(remainder >= other){
+            while((remainder > other) || (remainder == other)){
                 remainder = remainder - other;
             }
             return remainder;
