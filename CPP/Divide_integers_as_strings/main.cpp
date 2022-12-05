@@ -24,7 +24,7 @@ class BigInteger
         }
 
         void removeLeadingZeros(){
-            while(*digits.begin() == '0'){
+            while((*digits.begin() == '0') && (digits.length() > 1)){
                 digits.erase(digits.begin());
             }
         }
@@ -153,10 +153,6 @@ class BigInteger
             return this->digits;
         }
 
-        void print(){
-            std::cout << this->digits << std::endl;
-        }
-
         bool operator< (BigInteger const& other){
             return isLower(this->digits, other.digits);
         }
@@ -234,7 +230,7 @@ std::vector<std::string> divide_strings(std::string a, std::string b)
 
 int main(void)
 {
-    std::vector<std::string> results = divide_strings("88888", "2222");
+    std::vector<std::string> results = divide_strings("10", "2");
     std::cout << "quotient: " << results[0] << std::endl;
     std::cout << "remainder: " << results[1] << std::endl;
 
