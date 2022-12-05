@@ -153,6 +153,10 @@ class BigInteger
             return this->digits;
         }
 
+        void print(){
+            std::cout << this->digits << std::endl;
+        }
+
         bool operator< (BigInteger const& other){
             return isLower(this->digits, other.digits);
         }
@@ -199,7 +203,7 @@ class BigInteger
                 div_count++;
             }
             BigInteger quotient;
-            quotient.digits.append(1, (char)(div_count + '0'));
+            quotient.digits.append(std::to_string(div_count));
             return quotient;
         }
 
