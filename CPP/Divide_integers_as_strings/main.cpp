@@ -7,197 +7,122 @@
     require is disabled in JavaScript. Do it yourself ;-)
 */
 
+//TODO: turn around and do from back
+
 #include <iostream>
 #include <string>
 #include <vector>
+#include <deque>
+
+void printDeque(const std::deque<unsigned short>& digits){
+    for(auto i : digits){
+        std::cout << i;
+    }
+    std::cout << std::endl;
+}
+
+static std::deque<unsigned short> digitStringToDeque(const std::string& digitString){
+    std::deque<unsigned short> digitDeque;
+    for(auto c : digitString){
+        digitDeque.push_back((unsigned short)(c - '0'));
+    }
+    return digitDeque;
+}
 
 
+static std::string digitDequeToString(std::deque<unsigned short>& digitDeque){
+    std::string digitString;
+    while(!digitDeque.empty()){
+        digitString.append(1, (char)(digitDeque.front() + '0'));
+        digitDeque.pop_front();
+    }
+    return digitString;
+}
 
-class BigInteger 
+
+static void removeLeadingZeros(std::deque<unsigned short>& digits){
+    while((digits.front() == 0) && (digits.size() > 1)){
+        digits.pop_front();
+    }
+}
+
+
+static bool isLower(const std::deque<unsigned short>& a, const std::deque<unsigned short>& b)
 {
-    private:
-
-        std::string digits;
-
-        BigInteger(){
-            ; // 
-        }
-
-        void removeLeadingZeros(){
-            while((*digits.begin() == '0') && (digits.length() > 1)){
-                digits.erase(digits.begin());
-            }
-        }
-
-        bool isLower(const std::string& a, const std::string& b)
-        {
-            if(a.length() < b.length()){
-                return true;
-            }
-            else if(a.length() == b.length()){
-                for(size_t i=0; i<a.length(); i++){
-                    if(a[i] > b[i]){
-                        return false;
-                    }
-                    else if(a[i] < b[i]){
-                        return true;
-                    }
-                    else{
-                        ; // proceed.
-                    }
-                }
-            }
+    if(a.size() < b.size()){
+        return true;
+    }
+    else if(a.size() > b.size()){
+        return false;
+    } 
+    else if(a.size() == b.size()){
+        if(a == b){
             return false;
         }
-
-        bool isLarger(const std::string& a, const std::string& b)
-        {
-            if(a.length() > b.length()){
+        for(size_t i=0; i<a.size(); i++){
+            if(a[i] > b[i]){
+                return false;
+            }
+            else if(a[i] < b[i]){
                 return true;
             }
-            else if(a.length() == b.length()){
-                for(size_t i=0; i<a.length(); i++){
-                    if(a[i] > b[i]){
-                        return true;
-                    }
-                    else if(a[i] < b[i]){
-                        return false;
-                    }
-                    else{
-                        ; // proceed.
-                    }
-                }
+            else{
+                ; // proceed.
             }
-            return false;
         }
-
-        std::string minus(const std::string& a, const std::string& b)
-        {
-            std::string result;
-            int i = a.length() - 1;
-            int j = b.length() - 1;
-            unsigned short ubertrag = 0;
-            unsigned short digit;
-            unsigned short a_i;
-            unsigned short b_j;
-
-            while(i >= 0)
-            {
-                if(j >= 0){
-                    a_i = (unsigned short)(a[i] - '0');
-                    b_j = (unsigned short)(b[j] - '0');
-                    // actual calculation:
-                    b_j = b_j + ubertrag;
-                    ubertrag = 0;
-                    if(a_i >= b_j){
-                        digit = a_i - b_j;
-                    }
-                    else{
-                        digit = (a_i + 10) - b_j;
-                        ubertrag = 1;
-                    }
-                    j--;
-                }
-                else{
-                    digit = (unsigned short)(a[i] - '0') - ubertrag;
-                    ubertrag = 0;
-                }
-                result.insert(0, 1, (char)(digit + '0'));
-                i--;
-            }
-            return result;
-        }
-
-        BigInteger operator- (BigInteger const &other){
-            BigInteger result;
-            result.digits = minus(this->digits, other.digits);
-            result.removeLeadingZeros();
-            return result;
-        }
+    }
+    return false;
+}
 
 
-    public:
-
-        BigInteger(const std::string& number){
-            this->digits = number;
-        }
-
-        BigInteger(const BigInteger& other){
-            this->digits = other.digits;
-        }
-
-        BigInteger(BigInteger&& other){
-            this->digits = std::move(other.digits);
-        }
-
-        std::string getString(){
-            return this->digits;
-        }
-
-        bool operator< (BigInteger const& other){
-            return isLower(this->digits, other.digits);
-        }
-
-        bool operator> (BigInteger const& other){
-            return isLarger(this->digits, other.digits);
-        }
-        
-        bool operator== (BigInteger const& other){
-            return (this->digits == other.digits);
-        }
-
-        // Copy assignment operator.
-        BigInteger& operator= (BigInteger& other){
-            if(this == &other){
-                return *this;
-            }
-            this->digits = other.digits;
-            return *this;
-        }
-
-        // Move assignment operator.
-        BigInteger& operator= (BigInteger&& other){
-            if(this == &other){
-                return *this;
-            }
-            this->digits = other.digits;
-            other.digits.clear();
-            return *this;
-        }
-
-        BigInteger operator/ (BigInteger const &other){
-            size_t div_count = 0;
-            BigInteger remainder = *this;
-            while((remainder > other) || (remainder == other)){
-                remainder = remainder - other;
-                div_count++;
-            }
-            BigInteger quotient;
-            quotient.digits.append(std::to_string(div_count));
-            return quotient;
-        }
-
-        BigInteger operator% (BigInteger const &other){
-            BigInteger remainder = *this;
-            while((remainder > other) || (remainder == other)){
-                remainder = remainder - other;
-            }
-            return remainder;
-        }
-};
-
-
-std::vector<std::string> divide_strings(std::string a, std::string b) 
+static std::deque<unsigned short> minus(const std::deque<unsigned short>& minuend, const std::deque<unsigned short>& subtrahend)
 {
-    BigInteger divident = BigInteger(a);
-    BigInteger divisor = BigInteger(b);
-    BigInteger quotient = divident / divisor;
-    BigInteger remainder = divident % divisor;
+    std::deque<unsigned short> difference;
+    int i = minuend.size() - 1;
+    int j = subtrahend.size() - 1;
+    unsigned short ubertrag = 0;
+    unsigned short digit;
+    unsigned short subtrahend_digit;
 
+    while(i >= 0)
+    {
+        if(j >= 0){
+            subtrahend_digit = subtrahend[j] + ubertrag;
+            ubertrag = 0;
+            if(minuend[i] >= subtrahend_digit){
+                digit = minuend[i] - subtrahend_digit;
+            }
+            else{
+                digit = (minuend[i] + 10) - subtrahend_digit;
+                ubertrag = 1;
+            }
+            j--;
+        }
+        else{
+            digit = minuend[i] - ubertrag;
+            ubertrag = 0;
+        }
+        difference.push_front(digit);
+        i--;
+    }
+    removeLeadingZeros(difference); // can we remove this?
+    return difference;
+}
+
+
+std::vector<std::string> divide_strings(std::string a, std::string b){
+    int div_count = 0;
+    std::deque<unsigned short> remainder = digitStringToDeque(a);
+    std::deque<unsigned short> divisor = digitStringToDeque(b);
+
+    while (!isLower(remainder, divisor)){
+        remainder = minus(remainder, divisor);
+        div_count++;
+    }
+    
     std::vector<std::string> results;
-    results.push_back(quotient.getString());
-    results.push_back(remainder.getString());
-
+    results.push_back(std::to_string(div_count));
+    results.push_back(digitDequeToString(remainder));
     return results;
 }
 
