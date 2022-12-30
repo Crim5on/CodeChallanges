@@ -7,7 +7,8 @@
     require is disabled in JavaScript. Do it yourself ;-)
 */
 
-//TODO: turn around and do from back
+// TODO: aproach problem by doing "long division".
+// TODO: Google long division
 
 #include <iostream>
 #include <string>
