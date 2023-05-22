@@ -7,8 +7,6 @@
     require is disabled in JavaScript. Do it yourself ;-)
 */
 
-// TODO: aproach problem by doing "long division".
-// TODO: Google long division
 
 #include <iostream>
 #include <string>
@@ -32,7 +30,6 @@ static inline void patchLength(std::string& string, size_t requiredLength)
         string.insert(string.begin(), '0');
     }
 }
-
 
 static inline bool isGreaterOrEqual(std::string& a, std::string&b)
 {
@@ -60,7 +57,6 @@ static inline bool isGreaterOrEqual(std::string& a, std::string&b)
     return true; // if equal
 }
 
-
 static inline void nullCheck(std::string& number)
 {
     normalise(number);
@@ -69,13 +65,11 @@ static inline void nullCheck(std::string& number)
     }
 }
 
-
-
 static inline std::string minus(std::string a, std::string b)
 {
     char digit_char; 
-    int digit_a, digit_b, digit_res, hold;
-    hold = 0;
+    int digit_a, digit_b, digit_res;
+    int hold = 0;
     std::string result;
     patchLength(b, a.length());
 
@@ -103,8 +97,7 @@ static inline std::string minus(std::string a, std::string b)
 std::vector<std::string> divide_strings(std::string a, std::string b)
 {
     nullCheck(b);
-    std::string remainder = "";
-    std::string quotient = "";
+    std::string remainder, quotient;
     
     for(size_t i=0; i<a.length(); i++){
         size_t divCount = 0;
@@ -118,8 +111,8 @@ std::vector<std::string> divide_strings(std::string a, std::string b)
     }
 
     normalise(quotient);
-    // vector<string> {quotient, remainder}
 
+    // @return: vector<string> {quotient, remainder}
     std::vector<std::string> results;
     results.push_back(quotient);
     results.push_back(remainder);
