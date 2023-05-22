@@ -168,12 +168,10 @@ public:
 };
 
 
-// ****************************************************************************************************************************************
 
-
-
-/* LOGIC IMPLEMENTATON START */
-
+/** Interface function as given by codewars kata
+ * @return: vector<string> {quotient, remainder}
+ */ 
 std::vector<std::string> divide_strings(std::string a, std::string b)
 {
     // NOTE: very comfortable usage:
@@ -182,7 +180,6 @@ std::vector<std::string> divide_strings(std::string a, std::string b)
     Strinteger quotient = divident / divisor;
     Strinteger remainder = divident % divisor;
 
-    // @return: vector<string> {quotient, remainder}
     std::vector<std::string> results;
     results.push_back(quotient.getString());
     results.push_back(remainder.getString());
@@ -191,9 +188,7 @@ std::vector<std::string> divide_strings(std::string a, std::string b)
 
 
 
-
-/* TEST CODE IMPLEMENTATION START */
-
+/* TEST CODE IN MAIN */
 int main(void)
 {
     // test constructors
@@ -214,11 +209,6 @@ int main(void)
     std::cout << "t2 = t2 - t1 : " << t2.getString() << std::endl;
     t2 = t1;
     std::cout << "t2 = t1 : " << t2.getString() << std::endl;
-
-
-
-
-
 
 
 
