@@ -13,14 +13,15 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <deque>
+#include <exception>
 
 
 /* HELPER FUNCTIONS START */
 
-static inline void normalise(std::string& string){
+static inline void normalise(std::string& string)
+{
     while(string[0] == '0' && string.length() > 1){
-        string.erase(1);
+        string.erase(0, 1);
     }
 }
 
@@ -60,33 +61,17 @@ static inline bool isGreaterOrEqual(std::string& a, std::string&b)
 }
 
 
-static inline bool isLesserOrEqual(std::string& a, std::string&b)
+static inline void nullCheck(std::string& number)
 {
-    normalise(a);
-    normalise(b);
-
-    if(a.length() < b.length()){
-        return true;
+    normalise(number);
+    if(number.length() == 1 && number[0] == '0'){
+        throw std::out_of_range("Div / 0 is undefined!");
     }
-    else if(a.length() > b.length()){
-        return false;
-    }
-    for(size_t i=0; i<a.length(); i++){
-        // compare acii values
-        if(a[i] < b[i]){
-            return true;
-        }
-        else if(a[i] > b[i]){
-            return false;
-        }
-        else{
-            ;   // continue
-        }
-    }
-    return true; // if equal
 }
 
-static inline std::string minus(std::string& a, std::string& b)
+
+
+static inline std::string minus(std::string a, std::string b)
 {
     char digit_char; 
     int digit_a, digit_b, digit_res, hold;
@@ -94,11 +79,9 @@ static inline std::string minus(std::string& a, std::string& b)
     std::string result;
     patchLength(b, a.length());
 
-    // TODO: Fix formula.
     for(long i=a.length()-1; i>=0; i--){
         digit_a = a[i] - '0';
         digit_b = b[i] - '0';
-
         if((digit_a > digit_b) || (digit_a == digit_b && !hold)){
             digit_res = digit_a - (digit_b + hold);
             hold = 0;
@@ -119,21 +102,27 @@ static inline std::string minus(std::string& a, std::string& b)
 
 std::vector<std::string> divide_strings(std::string a, std::string b)
 {
-    std::string frontDivident;
-    uint64_t divideCounter = 0;
-
+    nullCheck(b);
+    std::string remainder = "";
+    std::string quotient = "";
+    
     for(size_t i=0; i<a.length(); i++){
-        frontDivident.push_back(a[i]);
-        if(isGreaterOrEqual(frontDivident, b)){
-            // frontDivident = frontDivident - b
-            // divide counter++
-        }
+        size_t divCount = 0;
+        remainder.push_back(a[i]);
+
+        while(isGreaterOrEqual(remainder, b)){   
+            remainder = minus(remainder, b);
+            divCount++;
+        }     
+        quotient.push_back(divCount + '0');
     }
 
-
-
+    normalise(quotient);
     // vector<string> {quotient, remainder}
+
     std::vector<std::string> results;
+    results.push_back(quotient);
+    results.push_back(remainder);
     return results;
 }
 
@@ -154,7 +143,24 @@ int main(void)
     std::string l6_v04 = "000400";
     std::string l3_v8 = "800";
 
-    // testing greater than function:
+    // testing normalise function:
+    std::string normNumber = "000";
+    std::cout << normNumber << " -> ";
+    normalise(normNumber);
+    std::cout << normNumber << std::endl;
+
+    normNumber = "0910";
+    std::cout << normNumber << " -> ";
+    normalise(normNumber);
+    std::cout << normNumber << std::endl;
+
+    normNumber = "03";
+    std::cout << normNumber << " -> ";
+    normalise(normNumber);
+    std::cout << normNumber << std::endl;
+
+
+    // testing greater equal than function:
     std::cout << "80000 >= 40000: " << isGreaterOrEqual(l5_v8, l5_v4) << std::endl;
     std::cout << "40000 >= 80000: " << isGreaterOrEqual(l5_v4, l5_v8) << std::endl;
     std::cout << "80000 >= 80000: " << isGreaterOrEqual(l5_v8, l5_v8) << std::endl;
@@ -162,12 +168,41 @@ int main(void)
     std::cout << "80000 >= 800: " << isGreaterOrEqual(l5_v8, l3_v8) << std::endl;
     std::cout << "800 >= 80000: " << isGreaterOrEqual(l3_v8, l5_v8) << std::endl;
 
-
     // testing minus function:
-    std::string minuend = "0";
-    std::string subtrahend = "0";
+    std::string minuend = "1000";
+    std::string subtrahend = "333";
     std::cout << minuend << " - " << subtrahend << " = " << minus(minuend, subtrahend) << std::endl;
 
+    // testing division;
+    std::cout << std::endl;
+    std::string divident = "199996";
+    std::string divisor = "33";
+    std::vector<std::string> results = divide_strings(divident, divisor);
+    std::cout << divident << " / " << divisor << " = " <<  results[0] << " \tR: " << results[1] << std::endl;
+
+    divident = "100";
+    divisor = "5";
+    results = divide_strings(divident, divisor);
+    std::cout << divident << " / " << divisor << " = " <<  results[0] << " \tR: " << results[1] << std::endl;
+
+    divident = "5";
+    divisor = "101";
+    results = divide_strings(divident, divisor);
+    std::cout << divident << " / " << divisor << " = " <<  results[0] << " \tR: " << results[1] << std::endl;
+
+    divident = "0";
+    divisor = "1";
+    results = divide_strings(divident, divisor);
+    std::cout << divident << " / " << divisor << " = " <<  results[0] << " \tR: " << results[1] << std::endl;
+
+    divident = "1";
+    divisor = "0";
+    try{
+        results = divide_strings(divident, divisor);
+        std::cout << divident << " / " << divisor << " = " <<  results[0] << " \tR: " << results[1] << std::endl;
+    }catch(std::out_of_range exception){
+        std::cout << "Caught division by 0 exception successfully!" << std::endl;
+    }
 
     return EXIT_SUCCESS;
 }
