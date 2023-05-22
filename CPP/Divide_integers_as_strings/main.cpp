@@ -14,81 +14,161 @@
 #include <exception>
 
 
-/* HELPER FUNCTIONS START */
 
-static inline void normalise(std::string& string)
+class Strinteger
 {
-    while(string[0] == '0' && string.length() > 1){
-        string.erase(0, 1);
-    }
-}
 
-static inline void patchLength(std::string& string, size_t requiredLength)
-{
-    while (string.length() < requiredLength)
+private:
+
+    std::string value;
+
+
+protected:    // helpers
+
+    inline void normalise(void)
     {
-        string.insert(string.begin(), '0');
+        while(value.length() > 1 && value[0] == '0'){
+            value.erase(0, 1);
+        }
     }
-}
 
-static inline bool isGreaterOrEqual(std::string& a, std::string&b)
-{
-    normalise(a);
-    normalise(b);
+    inline void patchLength(size_t requiredLength)
+    {
+        while (this->value.length() < requiredLength){
+            this->value.insert(this->value.begin(), '0');
+        }
+    }
 
-    if(a.length() > b.length()){
-        return true;
+    inline bool isNull(void)
+    {
+        this->normalise();
+        return ((this->value.length() == 1) && (this->value[0] == '0'));
     }
-    else if(a.length() < b.length()){
-        return false;
+
+
+public:
+
+    Strinteger(void) = default;
+
+    Strinteger(std::string digitString)
+    {
+        this->value = digitString;
+        this->normalise();
     }
-    for(size_t i=0; i<a.length(); i++){
-        // compare acii values
-        if(a[i] > b[i]){
+
+    Strinteger(const Strinteger& other)
+    {
+        this->value = other.value;
+    }
+
+    std::string getString(void)
+    {
+        return this->value;
+    }
+
+    void operator =(const Strinteger& other)
+    {
+        this->value = other.value;
+        this->normalise();
+    }
+
+    bool operator >=(Strinteger& other)
+    {
+        this->normalise();
+        other.normalise();
+
+        if(this->value.length() > other.value.length()){
             return true;
         }
-        else if(a[i] < b[i]){
+        else if(this->value.length() < other.value.length()){
             return false;
         }
-        else{
-            ;   // continue
+        for(size_t i=0; i<this->value.length(); i++){
+            // compare acii values
+            if(this->value[i] > other.value[i]){
+                return true;
+            }
+            else if(this->value[i] < other.value[i]){
+                return false;
+            }
+            else{
+                ;   // continue
+            }
         }
+        return true; // if equal            
     }
-    return true; // if equal
-}
 
-static inline void nullCheck(std::string& number)
-{
-    normalise(number);
-    if(number.length() == 1 && number[0] == '0'){
-        throw std::out_of_range("Div / 0 is undefined!");
-    }
-}
+    Strinteger operator -(Strinteger& other)
+    {
+        char digit_char; 
+        int digit_a, digit_b, digit_res;
+        int hold = 0;
+        Strinteger result;
 
-static inline std::string minus(std::string a, std::string b)
-{
-    char digit_char; 
-    int digit_a, digit_b, digit_res;
-    int hold = 0;
-    std::string result;
-    patchLength(b, a.length());
+        other.patchLength(this->value.length());
 
-    for(long i=a.length()-1; i>=0; i--){
-        digit_a = a[i] - '0';
-        digit_b = b[i] - '0';
-        if((digit_a > digit_b) || (digit_a == digit_b && !hold)){
-            digit_res = digit_a - (digit_b + hold);
-            hold = 0;
+        for(long i=this->value.length()-1; i>=0; i--){
+            digit_a = this->value[i] - '0';
+            digit_b = other.value[i] - '0';
+            if((digit_a > digit_b) || (digit_a == digit_b && !hold)){
+                digit_res = digit_a - (digit_b + hold);
+                hold = 0;
+            }
+            else{
+                digit_res = 10 - (digit_b + hold) + digit_a;
+                hold = 1;
+            }
+            digit_char = digit_res + '0';
+            result.value.insert(result.value.begin(), digit_char);
         }
-        else{
-            digit_res = 10 - (digit_b + hold) + digit_a;
-            hold = 1;
-        }
-        digit_char = digit_res + '0';
-        result.insert(result.begin(), digit_char);
+        return result;
     }
-    return result;
-}
+
+    Strinteger operator /(Strinteger& other)
+    {
+        if(other.isNull()){
+            throw std::out_of_range("Div / 0 is undefined!");
+        }
+
+        Strinteger remainder, quotient;
+        
+        for(size_t i=0; i<this->value.length(); i++){
+            size_t divCount = 0;
+            remainder.value.push_back(this->value[i]);
+
+            while(remainder >= other){   
+                remainder = remainder - other;
+                divCount++;
+            }     
+            quotient.value.push_back(divCount + '0');
+        }
+
+        quotient.normalise();
+        return quotient;
+    }
+
+    Strinteger operator %(Strinteger& other)
+    {
+        if(other.isNull()){
+            throw std::out_of_range("Div / 0 is undefined!");
+        }
+
+        Strinteger remainder;
+        
+        for(size_t i=0; i<this->value.length(); i++){
+            remainder.value.push_back(this->value[i]);
+            while(remainder >= other){   
+                remainder = remainder - other;
+            }     
+        }
+
+        remainder.normalise();
+        return remainder;
+    }
+};
+
+
+// ****************************************************************************************************************************************
 
 
 
@@ -96,26 +176,16 @@ static inline std::string minus(std::string a, std::string b)
 
 std::vector<std::string> divide_strings(std::string a, std::string b)
 {
-    nullCheck(b);
-    std::string remainder, quotient;
-    
-    for(size_t i=0; i<a.length(); i++){
-        size_t divCount = 0;
-        remainder.push_back(a[i]);
-
-        while(isGreaterOrEqual(remainder, b)){   
-            remainder = minus(remainder, b);
-            divCount++;
-        }     
-        quotient.push_back(divCount + '0');
-    }
-
-    normalise(quotient);
+    // NOTE: very comfortable usage:
+    Strinteger divident = Strinteger(a);
+    Strinteger divisor = Strinteger(b);
+    Strinteger quotient = divident / divisor;
+    Strinteger remainder = divident % divisor;
 
     // @return: vector<string> {quotient, remainder}
     std::vector<std::string> results;
-    results.push_back(quotient);
-    results.push_back(remainder);
+    results.push_back(quotient.getString());
+    results.push_back(remainder.getString());
     return results;
 }
 
@@ -126,45 +196,31 @@ std::vector<std::string> divide_strings(std::string a, std::string b)
 
 int main(void)
 {
-    //std::vector<std::string> results = divide_strings("60", "5");
-    //std::cout << "quotient: " << results[0] << std::endl;
-    //std::cout << "remainder: " << results[1] << std::endl;
+    // test constructors
+    Strinteger t1("0600");
+    std::cout << "t1: " << t1.getString() << std::endl;
 
-    // define test strings:
-    std::string l5_v8 = "80000";
-    std::string l5_v4 = "40000";
-    std::string l6_v04 = "000400";
-    std::string l3_v8 = "800";
+    Strinteger t2("2000");
+    std::cout << "t2: " << t2.getString() << std::endl;
 
-    // testing normalise function:
-    std::string normNumber = "000";
-    std::cout << normNumber << " -> ";
-    normalise(normNumber);
-    std::cout << normNumber << std::endl;
+    // test >= operator
+    std::cout << "t1 >= t2 : " << bool(t1 >= t2) << std::endl;
+    std::cout << "t2 >= t1 : " << bool(t2 >= t1) << std::endl;
 
-    normNumber = "0910";
-    std::cout << normNumber << " -> ";
-    normalise(normNumber);
-    std::cout << normNumber << std::endl;
-
-    normNumber = "03";
-    std::cout << normNumber << " -> ";
-    normalise(normNumber);
-    std::cout << normNumber << std::endl;
+    // test - and = operator
+    Strinteger t3 = t2 - t1;
+    std::cout << "t2 - t1 : " << t3.getString() << std::endl;
+    t2 = t2 - t1;
+    std::cout << "t2 = t2 - t1 : " << t2.getString() << std::endl;
+    t2 = t1;
+    std::cout << "t2 = t1 : " << t2.getString() << std::endl;
 
 
-    // testing greater equal than function:
-    std::cout << "80000 >= 40000: " << isGreaterOrEqual(l5_v8, l5_v4) << std::endl;
-    std::cout << "40000 >= 80000: " << isGreaterOrEqual(l5_v4, l5_v8) << std::endl;
-    std::cout << "80000 >= 80000: " << isGreaterOrEqual(l5_v8, l5_v8) << std::endl;
-    std::cout << "80000 >= 000400: " << isGreaterOrEqual(l5_v8, l6_v04) << std::endl;
-    std::cout << "80000 >= 800: " << isGreaterOrEqual(l5_v8, l3_v8) << std::endl;
-    std::cout << "800 >= 80000: " << isGreaterOrEqual(l3_v8, l5_v8) << std::endl;
 
-    // testing minus function:
-    std::string minuend = "1000";
-    std::string subtrahend = "333";
-    std::cout << minuend << " - " << subtrahend << " = " << minus(minuend, subtrahend) << std::endl;
+
+
+
+
 
     // testing division;
     std::cout << std::endl;
