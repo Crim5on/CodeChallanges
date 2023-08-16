@@ -1,7 +1,15 @@
 all: main.run
 
-main.run:
-	@gcc -std=c99 main.c -o main.run
+main.run: main.o myDeque.o 
+	gcc -o main.run main.o myDeque.o
+
+main.o:
+	gcc -c -std=c99 main.c
+
+myDeque.o:
+	gcc -c -std=c99 myDeque.c
 
 clean:
-	@rm *.run
+	rm *.run *.o
+
+.PHONY: all clean
