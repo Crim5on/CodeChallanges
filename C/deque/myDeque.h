@@ -10,21 +10,22 @@ struct Node{
 struct Deque{
     size_t size;
     struct Node* front;
-    struct Node* rear;
+    struct Node* back;
 };
 
 struct Node* node_create(int val);
  
 void deque_init(struct Deque* deque);
 
-void deque_insert_front(struct Deque* deque, int val);
+void deque_push_front(struct Deque* deque, int val);
 
-void deque_insert_rear(struct Deque* deque, int val);
+void deque_push_back(struct Deque* deque, int val);
 
-void deque_delete_front(struct Deque* deque);
+void deque_pop_front(struct Deque* deque);
 
-void deque_delete_rear(struct Deque* deque);
+void deque_pop_back(struct Deque* deque);
 
-void deque_print(struct Deque* deque);
+int deque_peek_front(struct Deque* deque);
 
+int deque_peek_back(struct Deque* deque);
 

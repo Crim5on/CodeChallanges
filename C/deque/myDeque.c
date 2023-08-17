@@ -1,10 +1,8 @@
 #include "myDeque.h"
-#include <stdio.h>
-
 
 
 struct Node* node_create(int val){
-    struct Node* newNode = malloc(sizeof(struct Node));     // TODO: what if unsuccessfull?
+    struct Node* newNode = malloc(sizeof(struct Node));
     if(newNode == NULL){
         return NULL;
     }
@@ -16,17 +14,17 @@ struct Node* node_create(int val){
  
 void deque_init(struct Deque* deque){
     deque->front = NULL;
-    deque->rear = NULL;
+    deque->back = NULL;
     deque->size = 0;
 }
 
-void deque_insert_front(struct Deque* deque, int val)
+void deque_push_front(struct Deque* deque, int val)
 {
     struct Node* newNode = node_create(val);
     
     if(deque->size == 0){
         deque->front = newNode;
-        deque->rear = newNode;
+        deque->back = newNode;
         deque->size = 1;
     }
     else{
@@ -37,24 +35,24 @@ void deque_insert_front(struct Deque* deque, int val)
     }
 }
 
-void deque_insert_rear(struct Deque* deque, int val)
+void deque_push_back(struct Deque* deque, int val)
 {
     struct Node* newNode = node_create(val);
     
     if(deque->size == 0){
         deque->front = newNode;
-        deque->rear = newNode;
+        deque->back = newNode;
         deque->size = 1;
     }
     else{
-        newNode->prev = deque->rear;
-        deque->rear->next = newNode;
-        deque->rear = newNode;
+        newNode->prev = deque->back;
+        deque->back->next = newNode;
+        deque->back = newNode;
         deque->size++;
     }
 }
 
-void deque_delete_front(struct Deque* deque)
+void deque_pop_front(struct Deque* deque)
 {
     struct Node* toDelete = deque->front;
 
@@ -63,7 +61,7 @@ void deque_delete_front(struct Deque* deque)
     }
     else if(deque->size == 1){
         deque->front = NULL;
-        deque->rear = NULL;
+        deque->back = NULL;
         deque->size = 0;
         free(toDelete);
     }
@@ -75,33 +73,37 @@ void deque_delete_front(struct Deque* deque)
     }
 }
 
-void deque_delete_rear(struct Deque* deque)
+void deque_pop_back(struct Deque* deque)
 {
-    struct Node* toDelete = deque->rear;
+    struct Node* toDelete = deque->back;
 
     if(deque->size == 0){
         return;
     }
     else if(deque->size == 1){
         deque->front = NULL;
-        deque->rear = NULL;
+        deque->back = NULL;
         deque->size = 0;
         free(toDelete);
     }
     else{
-        deque->rear = deque->rear->prev;
-        deque->rear->next = NULL;
+        deque->back = deque->back->prev;
+        deque->back->next = NULL;
         deque->size--;
         free(toDelete);
     }
 }
 
-void deque_print(struct Deque* deque){
-    struct Node* nodeReader = deque->front;
-    while(nodeReader != NULL){
-        printf("%i | ", nodeReader->val);
-        nodeReader = nodeReader->next;
+int deque_peek_front(struct Deque* deque)
+{
+    if(deque->front != NULL){
+        return deque->front->val;
     }
-    printf("\n");
 }
 
+int deque_peek_back(struct Deque* deque)
+{
+    if(deque->back != NULL){
+        return deque->front->val;
+    }
+}
