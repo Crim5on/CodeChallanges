@@ -1,14 +1,12 @@
-all: main.elf
 
-main.elf:
-	gcc -o main.elf -std=c99 -Wall main.c
+all: main
+
+main:
+	@fpc main.pas
 
 clean:
 	@echo "cleaning up.."
 	@rm *.elf *.o
 
 .PHONY: all clean
-
-
-
 
