@@ -6,7 +6,7 @@ main:
 
 clean:
 	@echo "cleaning up.."
-	@rm *.elf *.o
+	@rm *.elf *.o *.res
 
 .PHONY: all clean
 
